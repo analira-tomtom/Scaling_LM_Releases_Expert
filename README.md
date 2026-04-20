@@ -1,12 +1,11 @@
 # Roadmap Agent for WS6 Goal 2
 
-This agent generates a roadmap table for Goal 2 in the WS6 Enabling Weekly Releases workstream, incorporating the latest updates from JIRA tickets via an Atlassian MCP server.
+This agent generates a roadmap table for Goal 2 in the WS6 Enabling Weekly Releases workstream, incorporating the latest updates from JIRA tickets using the official Atlassian MCP server.
 
 ## Prerequisites
 
 - Python 3.14+
-- Atlassian API access (JIRA and Confluence)
-- MCP library
+- Official Atlassian MCP registered with Claude CLI
 
 ## Installation
 
@@ -15,10 +14,10 @@ This agent generates a roadmap table for Goal 2 in the WS6 Enabling Weekly Relea
    pip install -r requirements.txt
    ```
 
-2. Set environment variables for Atlassian access:
-   - `ATLASSIAN_BASE_URL`: Your Atlassian instance URL (e.g., https://tomtom.atlassian.net)
-   - `ATLASSIAN_EMAIL`: Your Atlassian account email
-   - `ATLASSIAN_API_TOKEN`: API token generated from https://id.atlassian.com/manage-profile/security/api-tokens
+2. Register the official Atlassian MCP server:
+   ```bash
+   claude mcp add --scope user --transport http atlassian https://mcp.atlassian.com/v1/mcp
+   ```
 
 ## Usage
 
@@ -27,7 +26,7 @@ Run the script:
 python3 roadmap_agent.py
 ```
 
-The script will use the Atlassian MCP server to fetch data from Confluence and JIRA, then generate a markdown table with the roadmap, updated with latest JIRA ticket information.
+The script generates a markdown table with the roadmap structure. The official Atlassian MCP server can be used to fetch real-time data from Confluence and JIRA as needed.
 
 ## Output
 
@@ -35,6 +34,6 @@ The roadmap table includes columns: Phase, Milestone, Status, JIRA Tickets, Late
 
 ## Notes
 
-- The agent connects to the Atlassian MCP server located in the `atlassian_mcp_server` directory.
-- If MCP calls fail, the script falls back to mock data.
-- Ensure your Atlassian account has permissions to access the specified Confluence page and JIRA project.
+- The agent uses the official Atlassian MCP server registered globally with Claude
+- The custom `atlassian_mcp_server` directory is kept for reference but is no longer used
+- The official MCP provides access to JIRA and Confluence APIs through standardized tools
