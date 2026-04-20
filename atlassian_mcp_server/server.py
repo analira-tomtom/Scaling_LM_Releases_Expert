@@ -6,6 +6,7 @@ from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool, ToolAnnotations
 from pydantic import BaseModel, Field
 from enum import Enum
+from datetime import datetime, timedelta
 
 class JiraIssueInput(BaseModel):
     issue_key: str = Field(description="The JIRA issue key, e.g., 'PROJ-123'")
@@ -22,23 +23,38 @@ class ConfluenceSearchInput(BaseModel):
     space_key: Optional[str] = Field(default=None, description="Space key to limit search")
     max_results: int = Field(default=10, description="Maximum number of results to return")
 
+class SlackChannelMessagesInput(BaseModel):
+    channel_id: str = Field(description="Slack channel ID")
+    limit: int = Field(default=10, description="Number of messages to retrieve")
+
+class SlackSearchInput(BaseModel):
+    query: str = Field(description="Search query for Slack messages")
+    limit: int = Field(default=10, description="Maximum number of results")
+
 class AtlassianTools(str, Enum):
     GET_JIRA_ISSUE = "get_jira_issue"
     SEARCH_JIRA_ISSUES = "search_jira_issues"
     GET_CONFLUENCE_PAGE = "get_confluence_page"
     SEARCH_CONFLUENCE_PAGES = "search_confluence_pages"
+    GET_SLACK_CHANNEL_MESSAGES = "get_slack_channel_messages"
+    SEARCH_SLACK_MESSAGES = "search_slack_messages"
 
 class AtlassianMCPServer:
     def __init__(self):
         self.base_url = os.getenv("ATLASSIAN_BASE_URL")
         self.email = os.getenv("ATLASSIAN_EMAIL")
-        self.api_token = os.getenv("ATLASSIAN_API_TOKEN")
+        self.api_token = os.getenv("ATLASSIAN_API_TOKEN") or os.getenv("JIRA_API_TOKEN")
+        self.slack_token = os.getenv("SLACK_BOT_TOKEN") or os.getenv("SLACK_API_TOKEN")
 
         if not all([self.base_url, self.email, self.api_token]):
-            raise ValueError("ATLASSIAN_BASE_URL, ATLASSIAN_EMAIL, and ATLASSIAN_API_TOKEN must be set")
+            raise ValueError("ATLASSIAN_BASE_URL, ATLASSIAN_EMAIL, and ATLASSIAN_API_TOKEN (or JIRA_API_TOKEN) must be set")
 
         self.session = requests.Session()
         self.session.auth = (self.email, self.api_token)
+        
+        if self.slack_token:
+            self.slack_session = requests.Session()
+            self.slack_session.headers.update({"Authorization": f"Bearer {self.slack_token}"})
 
     def get_jira_issue(self, issue_key: str) -> str:
         url = f"{self.base_url}/rest/api/3/issue/{issue_key}"
@@ -76,6 +92,42 @@ class AtlassianMCPServer:
         for page in data['results']:
             results.append(f"{page['id']}: {page['title']}")
         return "\n".join(results)
+    
+    def get_slack_channel_messages(self, channel_id: str, limit: int = 10) -> str:
+        if not self.slack_token:
+            return "Slack token not configured"
+        url = "https://slack.com/api/conversations.history"
+        params = {"channel": channel_id, "limit": limit}
+        response = self.slack_session.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        if not data.get('ok'):
+            return f"Slack error: {data.get('error', 'Unknown error')}"
+        results = []
+        for msg in data.get('messages', []):
+            user = msg.get('user', 'bot')
+            text = msg.get('text', '')
+            ts = msg.get('ts', '')
+            results.append(f"[{ts}] {user}: {text}")
+        return "\n".join(results)
+    
+    def search_slack_messages(self, query: str, limit: int = 10) -> str:
+        if not self.slack_token:
+            return "Slack token not configured"
+        url = "https://slack.com/api/search.messages"
+        params = {"query": query, "count": limit}
+        response = self.slack_session.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        if not data.get('ok'):
+            return f"Slack error: {data.get('error', 'Unknown error')}"
+        results = []
+        for msg in data.get('messages', {}).get('matches', []):
+            text = msg.get('text', '')
+            user = msg.get('user', 'bot')
+            channel = msg.get('channel', {}).get('name', 'direct')
+            results.append(f"[{channel}] {user}: {text}")
+        return "\n".join(results)
 
 async def serve():
     server = Server("atlassian-mcp-server")
@@ -108,6 +160,18 @@ async def serve():
                 inputSchema=ConfluenceSearchInput.model_json_schema(),
                 annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False),
             ),
+            Tool(
+                name=AtlassianTools.GET_SLACK_CHANNEL_MESSAGES,
+                description="Get recent messages from a Slack channel",
+                inputSchema=SlackChannelMessagesInput.model_json_schema(),
+                annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False),
+            ),
+            Tool(
+                name=AtlassianTools.SEARCH_SLACK_MESSAGES,
+                description="Search Slack messages",
+                inputSchema=SlackSearchInput.model_json_schema(),
+                annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False),
+            ),
         ]
 
     @server.call_tool()
@@ -124,6 +188,12 @@ async def serve():
                 return [TextContent(type="text", text=result)]
             case AtlassianTools.SEARCH_CONFLUENCE_PAGES:
                 result = atlassian.search_confluence_pages(arguments["query"], arguments.get("space_key"), arguments.get("max_results", 10))
+                return [TextContent(type="text", text=result)]
+            case AtlassianTools.GET_SLACK_CHANNEL_MESSAGES:
+                result = atlassian.get_slack_channel_messages(arguments["channel_id"], arguments.get("limit", 10))
+                return [TextContent(type="text", text=result)]
+            case AtlassianTools.SEARCH_SLACK_MESSAGES:
+                result = atlassian.search_slack_messages(arguments["query"], arguments.get("limit", 10))
                 return [TextContent(type="text", text=result)]
             case _:
                 raise ValueError(f"Unknown tool: {name}")
