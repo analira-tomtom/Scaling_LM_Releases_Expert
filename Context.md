@@ -29,8 +29,24 @@ Slack:
 #tmp-scaling-lm-weekly-releases https://tomtomslack.slack.com/archives/C0AJG2HHFRN
 #lmmap-e2e-workgroup  https://tomtomslack.slack.com/archives/C0ACPGKLKCP
 #tmp-adas-crossworkstream-alignment https://tomtomslack.slack.com/archives/C0AAZCMMANT
+#tmp-adas-algorithm-release-workstream https://tomtomslack.slack.com/archives/C0A9XHV5D36
+#adas-hd-delivery https://tomtomslack.slack.com/archives/C07V015E6L8
+#adas-hd-workflow-squad https://tomtomslack.slack.com/archives/C07B7HF8400
+
+
+For slack ONLY use information coming from these channels and/or referenced in them. Never use private conversations or not-public channels.
+
+
 
 From JIRA, please extract information from tickets that are referenced in confluence or slack related to this workstream.
 You can mainly focus on the ones pointed out in the weekly reports or slack channels, as for example:
 https://tomtom.atlassian.net/browse/ADASHD-2756
 https://tomtom.atlassian.net/browse/ADASHD-3339
+
+When asked "Can you generate next week summary report?" or when typing /report :
+- Give the answer using the same format used in the Confluence weekly folder for WS6 (same sections and tables).  
+- Include and highlight the more recent progress and updates as compared to the previous week report you found.  
+- Favor slack as source of truth, specially to retrieve updates from the last 72 hours. 
+- Mention the source you used in each statement.
+- Include the overall status and your proposal of RAG. If you are proposing a change on RAG, explain why.
+- Include diagrams and images from the previous week about the overall release process

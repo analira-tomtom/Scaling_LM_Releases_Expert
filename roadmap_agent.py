@@ -1,10 +1,49 @@
 import asyncio
 import os
+import re
+import sys
 from datetime import datetime
 import json
 
 # The agent uses the official Atlassian MCP server registered via Claude CLI
 # This enables direct access to JIRA and Confluence APIs through standardized MCP tools
+
+def parse_context_for_slack_channels(context_path="Context.md"):
+    """
+    Parse the repository context file for Slack channel references.
+    """
+    if not os.path.exists(context_path):
+        return []
+
+    slack_channels = []
+    with open(context_path, "r", encoding="utf-8") as f:
+        for line in f:
+            match = re.match(r"^\s*(#\S+)\s+(https://[^"]+)", line)
+            if match and "slack.com/archives" in match.group(2):
+                slack_channels.append({
+                    "channel": match.group(1),
+                    "url": match.group(2)
+                })
+    return slack_channels
+
+
+def summarize_slack_channels(context_path="Context.md"):
+    """
+    Create a human-readable summary of Slack channels found in the context file.
+    """
+    channels = parse_context_for_slack_channels(context_path)
+    if not channels:
+        return "No Slack channels were found in Context.md."
+
+    lines = ["Slack channels extracted from Context.md:"]
+    for channel in channels:
+        lines.append(f"- {channel['channel']}: {channel['url']}")
+
+    lines.append("")
+    lines.append("This helper only parses the context file for Slack channel references.")
+    lines.append("Actual message summary retrieval depends on your Claude Enterprise Slack integration.")
+    return "\n".join(lines)
+
 
 def parse_roadmap_from_content(content):
     """
