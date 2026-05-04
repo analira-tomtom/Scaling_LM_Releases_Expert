@@ -72,7 +72,7 @@ From the draft page, the team can review, add images/charts, fill in any remaini
 
 ### Atlassian authentication (first time only)
 
-The Atlassian MCP is pre-configured in `~/.claude/settings.json`. On first use, Claude Code will prompt you to authorize via OAuth:
+The Atlassian MCP server is pre-configured in [`.claude/settings.json`](.claude/settings.json) in this repo. On first use, Claude Code will prompt you to authorize via OAuth:
 
 1. Open the authorization URL shown in the chat
 2. Log in with your TomTom Atlassian account
@@ -82,7 +82,7 @@ Tokens are cached and refreshed automatically after that. You won't need to re-a
 
 ### Slack authentication
 
-Slack is pre-configured in `~/.claude/settings.json` and connects automatically using your claude.ai Slack integration.
+Slack uses the [claude.ai Slack integration](https://claude.ai/settings/integrations). Enable it once in your claude.ai account settings (Settings → Integrations → Slack) and it will be available automatically in any Claude Code session — no local configuration needed.
 
 ## Files
 

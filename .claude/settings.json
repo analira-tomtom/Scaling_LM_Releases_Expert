@@ -1,7 +1,12 @@
 {
+  "mcpServers": {
+    "atlassian": {
+      "command": "npx",
+      "args": ["-y", "@atlassian/mcp"]
+    }
+  },
   "permissions": {
     "allow": [
-      "Read(//Users/ana.lira/.claude/**)",
       "Bash(python3 -m json.tool)",
       "Bash(python3 -c ' *)"
     ]

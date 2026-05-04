@@ -128,6 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Claude Code — user-specific settings (permissions, personal paths)
+.claude/settings.local.json
+
 # IDE
 .vscode/
 .idea/
