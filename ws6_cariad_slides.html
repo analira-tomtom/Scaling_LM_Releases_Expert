@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WS6 — LM Map Weekly Releases: CARIAD Update · June 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #DADADA;
+  padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+}
+
+/* ─── SLIDE SHELL ───────────────────────────────────── */
+.slide {
+  width: 1280px;
+  height: 720px;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.22);
+}
+
+/* ─── HEADER ────────────────────────────────────────── */
+.header {
+  background: #12142B;
+  padding: 22px 48px 18px;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 4px;
+  background: #FF6300;
+}
+.header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.4px;
+}
+.header .sub {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FF6300;
+  margin-top: 5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.logo {
+  position: absolute;
+  top: 50%; right: 44px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+/* ─── FOOTER ────────────────────────────────────────── */
+.footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 52px;
+  background: #F6F6F6;
+  border-top: 1px solid #E8E8E8;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  gap: 0;
+}
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11.5px;
+  color: #444;
+  flex: 1;
+}
+.footer-item .dot {
+  width: 7px; height: 7px;
+  background: #FF6300;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.footer-item b { color: #12142B; }
+.conf {
+  position: absolute;
+  bottom: 16px; right: 48px;
+  font-size: 10px;
+  color: #BBC;
+}
+.pg {
+  position: absolute;
+  bottom: 16px; left: 48px;
+  font-size: 10px;
+  color: #BBC;
+}
+
+/* ══════════════════════════════════════════════════════
+   SLIDE 1
+══════════════════════════════════════════════════════ */
+.s1-body {
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  height: calc(720px - 88px - 52px);
+}
+
+/* Left column */
+.s1-left {
+  padding: 26px 30px 20px 48px;
+  border-right: 1px solid #EEE;
+  display: flex;
+  flex-direction: column;
+}
+.col-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: #AAA;
+  margin-bottom: 18px;
+}
+.ach {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 13px;
+}
+.ach-icon {
+  width: 20px; height: 20px;
+  background: #FF6300;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #fff;
+  font-weight: 900;
+}
+.ach-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #333;
+}
+.ach-text b { color: #12142B; }
+
+.stats {
+  display: flex;
+  gap: 0;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #EEE;
+}
+.stat {
+  flex: 1;
+  text-align: center;
+}
+.stat-num {
+  font-size: 30px;
+  font-weight: 900;
+  color: #FF6300;
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 10.5px;
+  color: #888;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Right column */
+.s1-right {
+  padding: 20px 40px 16px 28px;
+  display: flex;
+  flex-direction: column;
+}
+.chart-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: #AAA;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.chart-wrap {
+  flex: 1;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════════════════
+   SLIDE 2
+══════════════════════════════════════════════════════ */
+.s2-body {
+  padding: 28px 52px 20px;
+  height: calc(720px - 88px - 52px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Roadmap track */
+.track-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 14px;
+}
+/* Horizontal connector line */
+.track-wrap::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 55px; right: 55px;
+  height: 3px;
+  background: linear-gradient(to right, #FF6300 0%, #FF6300 67%, #CCC 67%);
+  z-index: 0;
+}
+
+.ms {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+}
+.ms-node {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 3px solid #FF6300;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+}
+.ms-node.done { background: #FF6300; }
+.ms-node.future { border-color: #CCC; }
+.ms-node.done::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 900; }
+.ms-node.future::after { content: ''; width: 8px; height: 8px; background: #CCC; border-radius: 50%; display: block; }
+
+.ms-lt {
+  font-size: 28px;
+  font-weight: 900;
+  color: #FF6300;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.ms-lt.future { color: #999; }
+.ms-period {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.ms-card {
+  width: 248px;
+  background: #F8F8F8;
+  border-radius: 8px;
+  padding: 13px 15px;
+}
+.ms-card.future {
+  background: #fff;
+  border: 1.5px dashed #DDD;
+}
+.ms-card-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #12142B;
+  margin-bottom: 8px;
+}
+.ms-card ul {
+  list-style: none;
+}
+.ms-card ul li {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+  padding-bottom: 2px;
+}
+.ms-card ul li::before {
+  content: '→';
+  position: absolute; left: 0;
+  color: #FF6300;
+  font-size: 10px;
+}
+.ms-card.future ul li::before { color: #BBB; }
+
+/* Risk banner */
+.risk-banner {
+  background: #FFF8F4;
+  border-left: 4px solid #FF6300;
+  border-radius: 4px;
+  padding: 13px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.risk-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.risk-text {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.65;
+}
+.risk-text b { color: #12142B; }
+.risk-text em { color: #FF6300; font-style: normal; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 1 — What We've Delivered
+════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="header">
+    <h1>Weekly LM Map Releases — What We've Delivered</h1>
+    <div class="sub">February → June 2026 · CARIAD Update</div>
+    <div class="logo">
+      <svg width="158" height="38" viewBox="0 0 158 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Brandmark: ring (hollow circle) -->
+        <circle cx="15" cy="13" r="10.5" fill="#df1b12"/>
+        <circle cx="15" cy="13" r="5.8"  fill="#12142B"/>
+        <!-- Brandmark: pin pointer -->
+        <polygon points="10,21 15,31 20,21" fill="#df1b12"/>
+        <!-- Wordmark: tomtom lowercase, white -->
+        <text x="34" y="26"
+              font-family="'Segoe UI',Arial,sans-serif"
+              font-size="22"
+              font-weight="700"
+              fill="white"
+              letter-spacing="-0.5">tomtom</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="s1-body">
+
+    <!-- Left: achievements -->
+    <div class="s1-left">
+      <div class="col-label">In response to CARIAD's request (Feb 2026)</div>
+
+      <div class="ach">
+        <div class="ach-icon">✓</div>
+        <div class="ach-text"><b>Weekly cadence established</b><br>
+          First weekly release CW09 (Feb 2026) — 4 weeks from request to first delivery</div>
+      </div>
+      <div class="ach">
+        <div class="ach-icon">✓</div>
+        <div class="ach-text"><b>14 consecutive releases without a gap</b><br>
+          CW09 → CW23, every week since commitment made</div>
+      </div>
+      <div class="ach">
+        <div class="ach-icon">✓</div>
+        <div class="ach-text"><b>Lead time on a clear downward trend</b><br>
+          From 14.4 d peak (CW16) to 12.7 d (CW21) — <b>−12% in 3 months</b>, and CW17 already proved 11.5 d is achievable</div>
+      </div>
+      <div class="ach">
+        <div class="ach-icon">✓</div>
+        <div class="ach-text"><b>Q2 lead-time target already reached — once</b><br>
+          CW17: 10.61 days, below the 11.5-day Q2 target. Proof it's achievable.</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">14</div>
+          <div class="stat-lbl">Releases<br>delivered</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">13</div>
+          <div class="stat-lbl">On time<br>(Thu target)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10.6d</div>
+          <div class="stat-lbl">Best lead time<br>(CW17 ⭐)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: lead time chart -->
+    <div class="s1-right">
+      <div class="chart-lbl">End-to-end lead time per release (days) — Q2 target ≤ 11.5 d</div>
+      <div class="chart-wrap">
+        <canvas id="ltChart"></canvas>
+      </div>
+    </div>
+
+  </div><!-- /s1-body -->
+
+  <div class="conf">TomTom Confidential © 2026</div>
+  <div class="pg">1 / 2</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     SLIDE 2 — What's Next
+════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="header">
+    <h1>What's Next — Continued Improvement Through Q3 2026</h1>
+    <div class="sub">Lead-time targets &amp; focus areas</div>
+    <div class="logo">
+      <svg width="158" height="38" viewBox="0 0 158 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Brandmark: ring (hollow circle) -->
+        <circle cx="15" cy="13" r="10.5" fill="#df1b12"/>
+        <circle cx="15" cy="13" r="5.8"  fill="#12142B"/>
+        <!-- Brandmark: pin pointer -->
+        <polygon points="10,21 15,31 20,21" fill="#df1b12"/>
+        <!-- Wordmark: tomtom lowercase, white -->
+        <text x="34" y="26"
+              font-family="'Segoe UI',Arial,sans-serif"
+              font-size="22"
+              font-weight="700"
+              fill="white"
+              letter-spacing="-0.5">tomtom</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="s2-body">
+
+    <!-- 3-node milestone track -->
+    <div class="track-wrap" style="justify-content:center;">
+
+      <!-- TODAY -->
+      <div class="ms" style="flex:0 0 360px;">
+        <div class="ms-node done"></div>
+        <div class="ms-lt">~12.7d</div>
+        <div class="ms-period">Today · June 2026</div>
+        <div class="ms-card">
+          <div class="ms-card-title">✅ Where we are</div>
+          <ul>
+            <li>14 consecutive weekly releases delivered</li>
+            <li>13 of 14 on time — reliable Thursday delivery</li>
+            <li>Lead time down 12% from peak in 3 months</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Q2 END -->
+      <div class="ms" style="flex:0 0 360px;">
+        <div class="ms-node done"></div>
+        <div class="ms-lt">≤ 11.5d</div>
+        <div class="ms-period">End Q2 · June 2026</div>
+        <div class="ms-card">
+          <div class="ms-card-title">🔧 Focus: Release stability</div>
+          <ul>
+            <li>Reducing errors that cause release delays or reruns</li>
+            <li>Automating release orchestration — more predictable timing, less human error</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SEPTEMBER -->
+      <div class="ms" style="flex:0 0 360px;">
+        <div class="ms-node future"></div>
+        <div class="ms-lt future">≤ 9d</div>
+        <div class="ms-period">September 2026</div>
+        <div class="ms-card future">
+          <div class="ms-card-title">🚀 Focus: Scalable delivery</div>
+          <ul>
+            <li>Automation matures to support faster end-to-end delivery</li>
+            <li>Pipeline designed to absorb more countries without increasing lead time</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /track-wrap -->
+
+    <!-- Risk banner -->
+    <div class="risk-banner">
+      <div class="risk-icon">⚠️</div>
+      <div class="risk-text">
+        <b>Risk to manage: geographic scope growth.</b>
+        We are committed to expanding coverage from ~4 countries today to ~40 countries by end of 2026 per CARIAD commitments.
+        This growth adds processing volume to every release cycle.
+        We are investing in automation specifically to absorb this expansion without eroding lead-time improvements —
+        but the trade-off between scope growth and lead time is something we are actively managing and will keep CARIAD informed on.
+      </div>
+    </div>
+
+  </div><!-- /s2-body -->
+
+  <div class="conf">TomTom Confidential © 2026</div>
+  <div class="pg">2 / 2</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     CHART
+════════════════════════════════════════════════════ -->
+<script>
+const labels = ['CW09','CW12','CW13','CW14','CW15','CW16','CW17','CW18','CW20','CW21','CW23'];
+const values = [13.72, 13.87, 13.84, 13.78, 13.82, 14.44, 10.61, 13.81, 13.77, 12.74, null];
+
+// Per-point styling
+const ptBg    = values.map(v => v === null ? 'transparent' : (v <= 11.5 ? '#FF6300' : '#12142B'));
+const ptBd    = values.map(v => v === null ? 'transparent' : (v <= 11.5 ? '#FF6300' : '#12142B'));
+const ptR     = values.map(v => v === null ? 0 : (v <= 11.5 ? 9 : 5));
+const ptStyle = values.map((v,i) => v === null ? 'circle' : (v <= 11.5 ? 'star' : 'circle'));
+
+const ctx = document.getElementById('ltChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'Lead time (days)',
+        data: values,
+        borderColor: '#12142B',
+        borderWidth: 2.5,
+        pointBackgroundColor: ptBg,
+        pointBorderColor: ptBd,
+        pointRadius: ptR,
+        pointHoverRadius: 9,
+        pointStyle: ptStyle,
+        tension: 0.35,
+        fill: {
+          target: { value: 11.5 },
+          above: 'rgba(18,20,43,0.04)',
+          below: 'rgba(255,99,0,0.08)',
+        },
+        spanGaps: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#12142B',
+        titleColor: '#FF6300',
+        bodyColor: '#fff',
+        padding: 10,
+        callbacks: {
+          label: ctx => ctx.parsed.y != null ? ` ${ctx.parsed.y} days` : '  TBC'
+        }
+      },
+      annotation: {
+        annotations: {
+          q2line: {
+            type: 'line',
+            yMin: 11.5, yMax: 11.5,
+            borderColor: '#FF6300',
+            borderWidth: 2,
+            borderDash: [7, 5],
+            label: {
+              display: true,
+              content: '  Q2 target ≤ 11.5 d',
+              position: 'start',
+              color: '#FF6300',
+              font: { size: 11, weight: '700', family: 'Segoe UI, Arial' },
+              backgroundColor: 'rgba(255,255,255,0.9)',
+              padding: { x: 6, y: 3 },
+            }
+          },
+          sepline: {
+            type: 'line',
+            yMin: 9, yMax: 9,
+            borderColor: '#AAAAAA',
+            borderWidth: 1.5,
+            borderDash: [5, 5],
+            label: {
+              display: true,
+              content: '  Sep target ≤ 9 d',
+              position: 'start',
+              color: '#999',
+              font: { size: 10.5, weight: '600', family: 'Segoe UI, Arial' },
+              backgroundColor: 'rgba(255,255,255,0.9)',
+              padding: { x: 6, y: 3 },
+            }
+          },
+          cw17box: {
+            type: 'label',
+            xValue: 'CW17',
+            yValue: 10.61,
+            yAdjust: -34,
+            content: ['⭐  10.61 d', 'Q2 target beaten'],
+            color: '#FF6300',
+            font: { size: 11, weight: '700', family: 'Segoe UI, Arial' },
+            textAlign: 'center',
+            backgroundColor: 'rgba(255,255,255,0.92)',
+            padding: { x: 7, y: 4 },
+            borderColor: '#FF6300',
+            borderWidth: 1,
+            borderRadius: 4,
+          },
+          cw23tbc: {
+            type: 'label',
+            xValue: 'CW23',
+            yValue: 13.5,
+            content: 'CW23: TBC',
+            color: '#BBBBBB',
+            font: { size: 10.5, family: 'Segoe UI, Arial' },
+            textAlign: 'center',
+          },
+          cw21badge: {
+            type: 'label',
+            xValue: 'CW21',
+            yValue: 12.74,
+            yAdjust: -30,
+            content: '12.74 d ↓',
+            color: '#12142B',
+            font: { size: 10.5, weight: '700', family: 'Segoe UI, Arial' },
+            backgroundColor: 'rgba(255,255,255,0.88)',
+            padding: { x: 5, y: 3 },
+            borderRadius: 3,
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        min: 8.5,
+        max: 15.5,
+        ticks: {
+          stepSize: 1,
+          callback: v => v + ' d',
+          font: { size: 11 },
+          color: '#AAA',
+        },
+        grid: { color: '#F2F2F2' },
+        border: { display: false }
+      },
+      x: {
+        ticks: { font: { size: 11 }, color: '#AAA' },
+        grid: { display: false },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
