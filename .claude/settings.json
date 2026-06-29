@@ -14,7 +14,9 @@
       "mcp__atlassian__searchConfluenceUsingCql",
       "mcp__atlassian__searchJiraIssuesUsingJql",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "Bash(mv \"/Users/ana.lira/Documents/Orbis/Repos/Scaling LM Releases Expert/.claude/commands/report.md\" \"/Users/ana.lira/Documents/Orbis/Repos/Scaling LM Releases Expert/.claude/commands/report_expert.md\")",
+      "Bash(mv \"/Users/ana.lira/Documents/Orbis/Repos/Scaling LM Releases Expert/.claude/commands/save.md\" \"/Users/ana.lira/Documents/Orbis/Repos/Scaling LM Releases Expert/.claude/commands/save_expert.md\")"
     ],
     "defaultMode": "auto"
   },
