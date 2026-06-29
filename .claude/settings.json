@@ -1,12 +1,5 @@
 {
-  "mcpServers": {
-    "atlassian": {
-      "command": "npx",
-      "args": ["-y", "@atlassian/mcp"]
-    }
-  },
   "permissions": {
-    "defaultMode": "auto",
     "allow": [
       "Bash(python3 -m json.tool)",
       "Bash(python3 -c ' *)",
@@ -19,7 +12,19 @@
       "mcp__atlassian__getConfluencePage",
       "mcp__atlassian__getJiraIssue",
       "mcp__atlassian__searchConfluenceUsingCql",
-      "mcp__atlassian__searchJiraIssuesUsingJql"
-    ]
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "mcpServers": {
+    "atlassian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@atlassian/mcp"
+      ]
+    }
   }
 }
